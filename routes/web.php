@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('/wms/workspaces', 'WMS_setup@createWorkspace');
+Route::post('/wms/workspaces/datastores', 'WMS_setup@createDatastore');
+Route::post('/wms/workspaces/datastores/layers', 'WMS_setup@createLayer');
