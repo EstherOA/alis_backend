@@ -93,4 +93,42 @@ Route::get('sp-registration-sector-boundary/{id}', 'API\SpRegistrationSectorBoun
 Route::post('sp-registration-sector-boundary/{id}', 'API\SpRegistrationSectorBoundaryController@update'); //Fixme add auth middleware
 Route::delete('sp-registration-sector-boundary/{id}', 'API\SpRegistrationSectorBoundaryController@destroy'); //Fixme add auth middleware
 
+Route::get('/business-processes', 'BusinessProcessController@index');
+Route::post('/business-processes', 'BusinessProcessController@store');
+Route::get('/business-processes/{id}', 'BusinessProcessController@show')->where('id', '[0-9]+');
+Route::put('/business-processes/{id}', 'BusinessProcessController@update')->where('id', '[0-9]+');
+Route::delete('/business-processes/{id}', 'BusinessProcessController@destroy')->where('id', '[0-9]+');
+Route::get('/business-processes/pending', 'BusinessProcessController@index_pending');
+
+
+Route::get('/business-sub-processes', 'BusinessSubProcessController@index');
+Route::post('/business-sub-processes', 'BusinessSubProcessController@store');
+Route::get('/business-sub-processes/{id}', 'BusinessSubProcessController@show')->where('id', '[0-9]+');
+Route::put('/business-sub-processes/{id}', 'BusinessSubProcessController@update')->where('id', '[0-9]+');
+Route::delete('/business-sub-processes/{id}', 'BusinessSubProcessController@destroy')->where('id', '[0-9]+');
+
+Route::get('/business-processes-fees', 'BusinessProcessFeeController@index');
+Route::post('/business-processes-fees', 'BusinessProcessFeeController@store');
+Route::get('/business-processes-fees/{id}', 'BusinessProcessFeeController@show')->where('id', '[0-9]+');
+Route::put('/business-processes-fees/{id}', 'BusinessProcessFeeController@update')->where('id', '[0-9]+');
+Route::delete('/business-processes-fees/{id}', 'BusinessProcessFeeController@destroy')->where('id', '[0-9]+');
+
+Route::get('/business-processes-checklists', 'BusinessProcessChecklistController@index');
+Route::post('/business-processes-checklists', 'BusinessProcessChecklistController@store');
+Route::get('/business-processes-checklists/{id}', 'BusinessProcessChecklistController@show')->where('id', '[0-9]+');
+Route::put('/business-processes-checklists/{id}', 'BusinessProcessChecklistController@update')->where('id', '[0-9]+');
+Route::delete('/business-processes-checklists/{id}', 'BusinessProcessChecklistController@destroy')->where('id', '[0-9]+');
+
+Route::get('/pending-applications', 'LrdPendingApplicationController@index');
+Route::post('/pending-applications', 'LrdPendingApplicationController@store');
+
+Route::get('/bills','PaymentBillController@index');
+Route::post('/bills', 'PaymentBillController@store');
+
+Route::get('/documents', 'DocumentController@index');
+
 Route::get('email/activate/{token}', 'RegistrationController@emailVerification');
+
+Route::any('/{id}', function(){
+    return response()->json(['message' => "resource not found", 'data' => []],404);
+});

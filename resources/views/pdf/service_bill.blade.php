@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Jekyll v3.8.5">
-    <title>Checkout example · Bootstrap</title>
+    <title>Fees</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/checkout/">
 
@@ -33,7 +32,7 @@
     </style>
 </head>
 <body class="bg-light">
-<div class="container">
+<div  id="bill" class="container">
     <div class="py-5 text-center">
         <img class="d-block mx-auto mb-4" src="{{asset('images/land.jpeg')}}" alt="">
         <hr/>
@@ -136,13 +135,24 @@
     <footer class="my-5 pt-5 text-muted text-center text-small">
         <p class="mb-1">&copy; 2017-2019 ALIS</p>
         {{--<ul class="list-inline">--}}
-            {{--<li class="list-inline-item"><a href="#">Privacy</a></li>--}}
-            {{--<li class="list-inline-item"><a href="#">Terms</a></li>--}}
-            {{--<li class="list-inline-item"><a href="#">Support</a></li>--}}
+        {{--<li class="list-inline-item"><a href="#">Privacy</a></li>--}}
+        {{--<li class="list-inline-item"><a href="#">Terms</a></li>--}}
+        {{--<li class="list-inline-item"><a href="#">Support</a></li>--}}
         {{--</ul>--}}
     </footer>
+
+
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function (){
+        var restorepage = $('body').html();
+        var printcontent = $('#bill').clone();
+        $('body').empty().html(printcontent);
+        window.print();
+        $('body').html(restorepage);
+    })();
+</script>
 </body>
 </html>
