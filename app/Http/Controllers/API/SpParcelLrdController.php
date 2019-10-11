@@ -10,6 +10,7 @@ use Phaza\LaravelPostgis\Geometries\LineString;
 use Phaza\LaravelPostgis\Geometries\MultiPolygon;
 use Phaza\LaravelPostgis\Geometries\Point;
 use Phaza\LaravelPostgis\Geometries\Polygon;
+use function Psy\debug;
 
 class SpParcelLrdController extends Controller
 {
@@ -65,6 +66,14 @@ class SpParcelLrdController extends Controller
                 $multi = new LineString($multi);
                 $multi = new Polygon([$multi]);
                 array_push($multipart, $multi);
+            }
+
+            if($this->overlaps($multi)) {
+
+                return response()->json([
+                    'message' => 'Polygon overlaps existing parcels',
+                    'body' => [],
+                ], 400);
             }
 
 //            if(count($geom) == 1) {
@@ -266,9 +275,11 @@ class SpParcelLrdController extends Controller
 
         try {
             $geom = $request['geom'];
-            $coords = [];
 
+            $coords = [];
+            logger()->debug($geom);
             foreach ($geom as $point) {
+                logger()->debug($point['latitude']);
                 array_push($coords, new Point($point['latitude'], $point['longitude']));
             }
 
@@ -291,23 +302,23 @@ class SpParcelLrdController extends Controller
             if($foundParcel->count()) {
                 return response()->json([
                     'message' => 'Lrd Parcels found',
-                    'body' => [
-                        'data' => $foundParcel->get(),
-                        'type' => 'LRD'
-                    ]
+                    'body' => $foundParcel->get(),
+                    'query' => $coords->toWKT()
                 ], 200);
             }
 
             return response()->json([
                 'message' => 'No Lrd Parcels found',
-                'body' => []
+                'body' => [],
+                'query' => $coords->toWKT()
             ], 404);
 
         } catch (\Exception $e) {
             logger()->error($e->getMessage());
             return response()->json([
                 'message' => $e->getMessage(),
-                'body' => []
+                'body' => [],
+                'query' => $coords->toWKT()
             ], 500);
         }
 
@@ -320,17 +331,14 @@ class SpParcelLrdController extends Controller
 
             logger()->debug($wkt);
 
-            $foundParcel = SpParcelLrd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', $wkt)
-                ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', $wkt)
-                ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', $wkt);
+            $foundParcel = SpParcelLrd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$wkt])
+                ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$wkt])
+                ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$wkt]);
 
             if($foundParcel->count()) {
                 return response()->json([
                     'message' => 'Lrd Parcels found',
-                    'body' => [
-                        'data' => $foundParcel->get(),
-                        'type' => 'LRD'
-                    ]
+                    'body' => $foundParcel->get()
                 ], 200);
             }
 
@@ -346,5 +354,16 @@ class SpParcelLrdController extends Controller
                 'body' => []
             ], 500);
         }
+    }
+
+    public function overlaps($coords) {
+
+        $foundParcel = SpParcelLrd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+            ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+            ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()]);
+
+        if($foundParcel->count())
+            return true;
+        else return false;
     }
 }

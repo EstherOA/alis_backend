@@ -18,6 +18,25 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::group([
+    'middleware' => ['auth:api', 'roles']
+], function () {
+    Route::get('logout', 'SessionsController@logout');
+});
+Route::get('email/activate/{token}', 'RegistrationController@emailVerification');
+Route::post('login', 'SessionsController@login');
+Route::post('register', 'RegistrationController@store');
+
+Route::group([
+    'namespace' => 'Auth',
+    'middleware' => 'api',
+    'prefix' => 'password'
+], function () {
+    Route::post('create', 'PasswordResetController@create');
+    Route::get('find/{token}', 'PasswordResetController@find');
+    Route::post('reset', 'PasswordResetController@reset');
+});
+
 Route::post('sp-beacon-cadastrals', 'API\SpBeaconCadastralController@store'); //Fixme add auth middleware
 Route::get('sp-beacon-cadastrals', 'API\SpBeaconCadastralController@index'); //Fixme add auth middleware
 Route::get('sp-beacon-cadastrals/{id}', 'API\SpBeaconCadastralController@read'); //Fixme add auth middleware
@@ -54,6 +73,7 @@ Route::get('sp-parcel-lrd/{id}', 'API\SpParcelLrdController@read'); //Fixme add 
 Route::post('sp-parcel-lrd/{id}', 'API\SpParcelLrdController@update'); //Fixme add auth middleware
 Route::delete('sp-parcel-lrd/{id}', 'API\SpParcelLrdController@destroy'); //Fixme add auth middleware
 Route::post('search-lrd', 'API\SpParcelLrdController@findParcelByCoordinates'); //Fixme add auth middleware
+Route::post('search-lrd/wkt', 'API\SpParcelLrdController@wktSearch'); //Fixme add auth middleware
 
 Route::post('sp-parcel-pvlmd', 'API\SpParcelPvlmdController@store'); //Fixme add auth middleware
 Route::get('sp-parcel-pvlmd', 'API\SpParcelPvlmdController@index'); //Fixme add auth middleware
@@ -61,6 +81,7 @@ Route::get('sp-parcel-pvlmd/{id}', 'API\SpParcelPvlmdController@read'); //Fixme 
 Route::post('sp-parcel-pvlmd/{id}', 'API\SpParcelPvlmdController@update'); //Fixme add auth middleware
 Route::delete('sp-parcel-pvlmd/{id}', 'API\SpParcelPvlmdController@destroy'); //Fixme add auth middleware
 Route::post('search-pvlmd', 'API\SpParcelPvlmdController@findParcelByCoordinates'); //Fixme add auth middleware
+Route::post('search-pvlmd/wkt', 'API\SpParcelPvlmdController@wktSearch'); //Fixme add auth middleware
 
 Route::post('sp-parcel-smd', 'API\SpParcelSmdController@store'); //Fixme add auth middleware
 Route::get('sp-parcel-smd', 'API\SpParcelSmdController@index'); //Fixme add auth middleware
@@ -68,6 +89,7 @@ Route::get('sp-parcel-smd/{id}', 'API\SpParcelSmdController@read'); //Fixme add 
 Route::post('sp-parcel-smd/{id}', 'API\SpParcelSmdController@update'); //Fixme add auth middleware
 Route::delete('sp-parcel-smd/{id}', 'API\SpParcelSmdController@destroy'); //Fixme add auth middleware
 Route::post('search-smd', 'API\SpParcelSmdController@findParcelByCoordinates'); //Fixme add auth middleware
+Route::post('search-smd/wkt', 'API\SpParcelSmdController@wktSearch'); //Fixme add auth middleware
 
 Route::post('sp-regional-boundary', 'API\SpRegionalBoundaryController@store'); //Fixme add auth middleware
 Route::get('sp-regional-boundary', 'API\SpRegionalBoundaryController@index'); //Fixme add auth middleware

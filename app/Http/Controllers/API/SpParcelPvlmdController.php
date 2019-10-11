@@ -52,6 +52,14 @@ class SpParcelPvlmdController extends Controller
                 array_push($multipart, $multi);
             }
 
+            if($this->overlaps($multi)) {
+
+                return response()->json([
+                    'message' => 'Polygon overlaps existing parcels',
+                    'body' => [],
+                ], 400);
+            }
+
 //            if(count($geom) == 1) {
 //                $multipart = $multipart[0];
 //            }else if(count($geom) == 2){
@@ -259,23 +267,23 @@ class SpParcelPvlmdController extends Controller
             if($foundParcel->count()) {
                 return response()->json([
                     'message' => 'Pvlmd Parcels found',
-                    'body' => [
-                        'data' => $foundParcel->get(),
-                        'type' => 'LRD'
-                    ]
+                    'body' => $foundParcel->get(),
+                    'query' => $coords->toWKT()
                 ], 200);
             }
 
             return response()->json([
                 'message' => 'No Pvlmd Parcels found',
-                'body' => []
+                'body' => [],
+                'query' => $coords->toWKT()
             ], 404);
 
         } catch (\Exception $e) {
             logger()->error($e->getMessage());
             return response()->json([
                 'message' => $e->getMessage(),
-                'body' => []
+                'body' => [],
+                'query' => $coords->toWKT()
             ], 500);
         }
 
@@ -288,17 +296,14 @@ class SpParcelPvlmdController extends Controller
 
             logger()->debug($wkt);
 
-            $foundParcel = SpParcelPvlmd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', $wkt)
-                ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', $wkt)
-                ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', $wkt);
+            $foundParcel = SpParcelPvlmd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$wkt])
+                ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$wkt])
+                ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$wkt]);
 
             if($foundParcel->count()) {
                 return response()->json([
                     'message' => 'Pvlmd Parcels found',
-                    'body' => [
-                        'data' => $foundParcel->get(),
-                        'type' => 'PVLMD'
-                    ]
+                    'body' => $foundParcel->get()
                 ], 200);
             }
 
@@ -314,6 +319,17 @@ class SpParcelPvlmdController extends Controller
                 'body' => []
             ], 500);
         }
+    }
+
+    public function overlaps($coords) {
+
+        $foundParcel = SpParcelPvlmd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+            ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+            ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()]);
+
+        if($foundParcel->count())
+            return true;
+        else return false;
     }
 
 }
