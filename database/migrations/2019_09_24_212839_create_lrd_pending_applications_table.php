@@ -46,7 +46,7 @@ class CreateLrdPendingApplicationsTable extends Migration
             $table->text('gender')->nullable();
             $table->text('district')->nullable();
             $table->text('region')->nullable();
-            $table->text('bill_number')->nullable();
+            $table->integer('bill_number')->nullable();
             $table->timestamps();
         });
     }

@@ -17,6 +17,7 @@ class CreateLrdMainApplicationsTable extends Migration
             $table->bigIncrements('id');
             $table->text('ar_client_id')->nullable();
             $table->text('ar_name')->nullable();
+            $table->string('ar_address',2000)->nullable();
             $table->integer('pid')->nullable();
             $table->string('glpin',15)->nullable();
             $table->string('case_number',250)->nullable();
@@ -64,7 +65,6 @@ class CreateLrdMainApplicationsTable extends Migration
             $table->text('modified_by_id')->nullable();
             $table->string('stool_family_name',500)->nullable();
             $table->string('is_part_of_gelis_area',10)->nullable();
-            $table->string('ar_address',2000)->nullable();
             $table->string('grantors_name',2000)->nullable();
             $table->string('grantors_address',500)->nullable();
             $table->text('stamp_duty_description')->nullable();

@@ -17,6 +17,8 @@ class CreateLrdApplicationsTable extends Migration
             $table->bigIncrements('id');
             $table->text('case_number')->nullable();
             $table->text('job_number')->nullable();
+            $table->integer('business_process_sub_id')->nullable();
+            $table->string('business_process_sub_name',255)->nullable();
             $table->integer('business_process_id')->nullable();
             $table->string('business_process_name',255)->nullable();
             $table->text('job_purpose')->nullable();
@@ -64,8 +66,6 @@ class CreateLrdApplicationsTable extends Migration
             $table->timestamp('batch_date')->nullable();
             $table->text('batched_by')->nullable();
             $table->text('batched_by_id')->nullable();
-            $table->integer('business_process_sub_id')->nullable();
-            $table->string('business_process_sub_name',255)->nullable();
             $table->text('divisional_registry_unit')->nullable();
             $table->text('old_file_record_numbers')->nullable();
             $table->integer('application_priority_number')->nullable();

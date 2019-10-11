@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BusinessProcess;
+use App\BusinessSubProcess;
 use App\LrdPendingApplication;
 use App\PaymentBill;
 use Carbon\Carbon;
@@ -15,7 +16,7 @@ class LrdPendingApplicationController extends Controller
 {
 
     public function index(){
-        $pendingApplication = LrdPendingApplication::all();
+        $pendingApplication = LrdPendingApplication::getAllPendingApplications();
         return response()->json(['message' => "OK", 'data' => $pendingApplication], 200);
     }
 
@@ -42,26 +43,24 @@ class LrdPendingApplicationController extends Controller
                     $bill->created_by_id = 1; //fixme: change to authenticated user id
                     $bill->bill_date = Carbon::today()->toDateString();
                     $bill->bill_amount = \request('amount');
-                    $bill->bill_date = Carbon::today()->toDateString();
                     $bill->save();
-                    $bill->job_number =  'LVDGAST'.sprintf("%05d", $bill->id);
+                    $bill->job_number =  'LVDGAST'.sprintf("%05d", $bill->id).Carbon::today()->format('Y');
                     $bill->save();
                     $pendingApplication = new LrdPendingApplication();
                     $pendingApplication->lessees_name = \request('name');
-                    $pendingApplication->business_process_name = BusinessProcess::where('id', '=', \request('businessProcessId'))->first('name');
-                    $pendingApplication->business_process_sub_name = BusinessProcess::where('id', '=', \request('businessSubProcessId'))->first('name');
+                    $pendingApplication->business_process_name = BusinessProcess::where('id', '=', \request('businessProcessId'))->value('name');
+                    $pendingApplication->business_process_sub_name = BusinessSubProcess::where('id', '=', \request('businessSubProcessId'))->value('name');
                     $pendingApplication->business_process_id = \request('businessProcessId');
                     $pendingApplication->business_process_sub_id = \request('businessSubProcessId');
                     $pendingApplication->bill_number = $bill->id;
                     $pendingApplication->job_number = $bill->job_number;
-                    $pendingApplication->email = \request('email');
+                    $pendingApplication->email_address = \request('email');
                     $pendingApplication->created_by = "David Marfo";
                     $pendingApplication->created_by_id = 1; //fixme: change to authenticated user id
                     $pendingApplication->save();
                     return $pendingApplication->id;
                 });
-                Log::info($id);
-                return response()->json(['message' => 'Business process fee successfully created', 'data' => ["url" => url('generate-pdf/service/'.$id)]], 201);
+                return response()->json(['message' => 'Application successfully created', 'data' => ["url" => url('generate-pdf/service/'.$id)]], 201);
             } catch (\Exception $e){
                 Log::error($e);
                 return response()->json(['message' => 'Error while creating application', 'data' => $e], 500);
