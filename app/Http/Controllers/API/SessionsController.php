@@ -57,6 +57,7 @@ class SessionsController extends Controller
     public function logout(Request $request) {
 
         try {
+
             $request->user()->token()->revoke();
 
             return response()->json([
