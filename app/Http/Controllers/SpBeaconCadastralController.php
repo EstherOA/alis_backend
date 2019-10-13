@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use App\SpCadastral;
+use App\SpBeaconCadastral;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -10,7 +10,7 @@ use Phaza\LaravelPostgis\Geometries\LineString;
 use Phaza\LaravelPostgis\Geometries\Point;
 use Phaza\LaravelPostgis\Geometries\Polygon;
 
-class SpCadastralController extends Controller
+class SpBeaconCadastralController extends Controller
 {
     //
     public function store(Request $request) {
@@ -18,29 +18,8 @@ class SpCadastralController extends Controller
         //validate request data
         $validator = Validator::make($request->all(), [
 
-            'ccno' => 'nullable|string',
-            'ref_no' => 'nullable|string',
-            'reg_no' => 'nullable|string',
-            'cert_no' => 'nullable|string',
-            'a_name' => 'nullable|string',
-            'grantor' => 'nullable|string',
-            'locality' => 'nullable|string',
-            'job_number' => 'nullable|string',
-            'type_instr' => 'nullable|string',
-            'date_instr' => 'nullable|string',
-            'considerat' => 'nullable|string',
-            'purpose' => 'nullable|string',
-            'date_com' => 'nullable|string',
-            'term' => 'nullable|string',
-            'mul_claim' => 'nullable|string',
-            'remarks' => 'nullable|string',
-            't_code' => 'nullable|string',
-            'label_code' => 'nullable|string',
-            'plotted_by' => 'nullable|string',
-            'checked_by' => 'nullable|string',
-            'plott_date' => 'nullable|string',
-            'source' => 'nullable|string',
-            'geom' => 'nullable',
+            'geom' => 'required',
+            'labels' => 'nullable|numeric'
         ]);
 
         if ($validator->fails()) {
@@ -69,19 +48,23 @@ class SpCadastralController extends Controller
                 $polygon = new Polygon([$polygon]);
             }
             logger()->debug($polygon);
-            $input = $request->all();
-            $input['geom'] = $polygon;
-            $cadastral =  SpCadastral::create($input);
+
+            $beaconCadastral = new SpBeaconCadastral();
+            $beaconCadastral->geom = $polygon;
+            if($request['labels']) {
+                $beaconCadastral->labels = $request['labels'];
+            }
+            $beaconCadastral->save();
 
             return response()->json([
-                'message' => 'Cadastral created successfully',
-                'body' => $cadastral
+                'message' => 'Beacon Cadastral created successfully',
+                'body' => $beaconCadastral
             ], 200);
 
         } catch (\Exception $e) {
             logger()->error($e->getMessage());
             return response()->json([
-                'message' => 'Error creating Cadastral',
+                'message' => 'Error creating beacon cadastral',
                 'body' => []
             ], 500);
         }
@@ -89,38 +72,38 @@ class SpCadastralController extends Controller
 
     public function index() {
 
-        $cadastrals = SpCadastral::all();
+        $beaconCadastrals = SpBeaconCadastral::all();
 
-        if($cadastrals->count()) {
+        if($beaconCadastrals->count()) {
 
             return response()->json([
-                'message' => 'Sp_Cadastral found',
-                'body' => $cadastrals
+                'message' => 'Sp_Beacon_Cadastral found',
+                'body' => $beaconCadastrals
             ], 200);
 
         }
 
         return response()->json([
-            'message' => 'Sp_Cadastral not found',
+            'message' => 'Sp_Beacon_Cadastral not found',
             'body' => []
         ], 400);
     }
 
     public function read($id) {
 
-        $cadastrals = SpCadastral::where('id', '=', $id);
+        $beaconCadastrals = SpBeaconCadastral::where('id', '=', $id);
 
-        if($cadastrals->count()) {
+        if($beaconCadastrals->count()) {
 
             return response()->json([
-                'message' => 'SpCadastral found',
-                'body' => $cadastrals->first()
+                'message' => 'SpBeaconCadastral found',
+                'body' => $beaconCadastrals->first()
             ], 200);
 
         }
 
         return response()->json([
-            'message' => 'SpCadastral not found',
+            'message' => 'SpBeaconCadastral not found',
             'body' => []
         ], 400);
 
@@ -129,29 +112,8 @@ class SpCadastralController extends Controller
     public function update(Request $request, $id) {
         $validator = Validator::make($request->all(), [
 
-            'ccno' => 'nullable|string',
-            'ref_no' => 'nullable|string',
-            'reg_no' => 'nullable|string',
-            'cert_no' => 'nullable|string',
-            'a_name' => 'nullable|string',
-            'grantor' => 'nullable|string',
-            'locality' => 'nullable|string',
-            'job_number' => 'nullable|string',
-            'type_instr' => 'nullable|string',
-            'date_instr' => 'nullable|string',
-            'considerat' => 'nullable|string',
-            'purpose' => 'nullable|string',
-            'date_com' => 'nullable|string',
-            'term' => 'nullable|string',
-            'mul_claim' => 'nullable|string',
-            'remarks' => 'nullable|string',
-            't_code' => 'nullable|string',
-            'label_code' => 'nullable|string',
-            'plotted_by' => 'nullable|string',
-            'checked_by' => 'nullable|string',
-            'plott_date' => 'nullable|string',
-            'source' => 'nullable|string',
-            'geom' => 'nullable',
+            'geom' => 'required',
+            'labels' => 'nullable|numeric'
         ]);
 
         if ($validator->fails()) {
@@ -163,12 +125,12 @@ class SpCadastralController extends Controller
 
         try {
 
-            $cadastral = SpCadastral::where('id', '=', $id);
+            $beaconCadastral = SpBeaconCadastral::where('id', '=', $id);
 
-            if( !$cadastral->count()) {
+            if( !$beaconCadastral->count()) {
 
                 return response()->json([
-                    'message' => 'Cadastral not found',
+                    'message' => 'Beacon cadastral not found',
                     'body' => []
                 ], 404);
             }
@@ -190,15 +152,17 @@ class SpCadastralController extends Controller
                 $polygon = new LineString($polygon);
                 $polygon = new Polygon([$polygon]);
             }
-//            $polygon = new MultiPoint($polygon);
             logger()->debug($polygon);
-            $input = $request->all();
-            $input['geom'] = $polygon;
-            $cadastral = $cadastral->first()->update($input);
+            $beaconCadastral = $beaconCadastral->first();
+            $beaconCadastral->geom = $polygon;
+            if($request['labels']) {
+                $beaconCadastral->labels = $request['labels'];
+            }
+            $beaconCadastral->save();
 
             return response()->json([
-                'message' => 'Sp_Cadastral updated successfully',
-                'body' => $cadastral
+                'message' => 'Sp_Beacon_Cadastral updated successfully',
+                'body' => $beaconCadastral
             ], 200);
 
         } catch (\Exception $e) {
@@ -213,21 +177,21 @@ class SpCadastralController extends Controller
     public function destroy($id) {
 
         try {
-            $cadastrals = SpCadastral::where('id', '=', $id);
+            $beaconCadastrals = SpBeaconCadastral::where('id', '=', $id);
 
-            if(!$cadastrals->count()) {
+            if(!$beaconCadastrals->count()) {
 
                 return response()->json([
-                    'message' => 'No Sp_Cadastral found',
-                    'body' => $cadastrals->first()
+                    'message' => 'No Sp_Beacon_Cadastral found',
+                    'body' => $beaconCadastrals->first()
                 ], 404);
 
             }
 
-            $cadastrals->first()->delete();
+            $beaconCadastrals->first()->delete();
 
             return response()->json([
-                'message' => 'Sp_Cadastral deleted',
+                'message' => 'Sp_Beacon_Cadastral deleted',
                 'body' => []
             ], 200);
         } catch (\Exception $e) {

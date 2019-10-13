@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -74,16 +74,20 @@ class PasswordResetController extends Controller
             ->first();
         if (!$passwordReset)
             return response()->json([
-                'message' => 'This password reset token is invalid.'
+                'message' => 'Invalid password reset token.',
+                'body' => []
             ], 404);
+
         if (Carbon::parse($passwordReset->updated_at)->addMinutes(720)->isPast()) {
             $passwordReset->delete();
             return response()->json([
-                'message' => 'This password reset token is invalid.'
+                'message' => 'Invalid password reset token.',
+                'body' => []
             ], 400);
         }
         return response()->json([
             'message' => 'Password reset token found',
+            'body' => [],
             '$token' => $passwordReset
         ], 200);
     }
@@ -108,19 +112,25 @@ class PasswordResetController extends Controller
             ['token', $request->token],
             ['email', $request->email]
         ])->first();
+
         if (!$passwordReset)
             return response()->json([
-                'message' => 'This password reset token is invalid.'
+                'message' => 'Invalid password reset token',
+                'body' => []
             ], 404);
         $user = User::where('email', $passwordReset->email)->first();
         if (!$user)
             return response()->json([
-                'message' => "We can't find a user with that e-mail address."
+                'message' => "User does not exist",
+                'body' => []
             ], 404);
         $user->password = bcrypt($request['password']);
         $user->save();
         $passwordReset->delete();
         $user->notify(new PasswordResetSuccess($passwordReset));
-        return response()->json($user);
+        return response()->json([
+            'message' => 'Password reset successfully',
+            'body' => $user
+        ], 200);
     }
 }

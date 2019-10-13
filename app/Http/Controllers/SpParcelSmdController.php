@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use App\SpParcelSmd;
 use App\Http\Controllers\Controller;

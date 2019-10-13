@@ -46,7 +46,7 @@ class PasswordResetRequest extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->line('You are receiving this email because we received a password reset request for your account.')
-            ->action('Reset Password', url('/'))
+            ->action('Reset Password', $url)
             ->line('If you did not make this request, no further action is required.');
     }
 

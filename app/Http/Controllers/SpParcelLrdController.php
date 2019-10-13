@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use App\SpParcelLrd;
-use App\SpParcelPvlmd;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -11,8 +10,9 @@ use Phaza\LaravelPostgis\Geometries\LineString;
 use Phaza\LaravelPostgis\Geometries\MultiPolygon;
 use Phaza\LaravelPostgis\Geometries\Point;
 use Phaza\LaravelPostgis\Geometries\Polygon;
+use function Psy\debug;
 
-class SpParcelPvlmdController extends Controller
+class SpParcelLrdController extends Controller
 {
     //
     public function store(Request $request) {
@@ -20,12 +20,28 @@ class SpParcelPvlmdController extends Controller
         //validate request data
         $validator = Validator::make($request->all(), [
 
-            'src_info' => 'nullable|numeric',
-            'src_date' => 'nullable|string',
-            'pvlmdid' => 'nullable|string',
+            'cc_numb' => 'nullable|string',
+            'ref_no' => 'nullable|string',
+            'reg_no' => 'nullable|string',
+            'cert_no' => 'nullable|string',
+            'a_name' => 'nullable|string',
+            'grantor' => 'nullable|string',
+            'locality' => 'nullable|string',
+            'job_number' => 'nullable|string',
+            'type_instr' => 'nullable|string',
+            'date_ins' => 'nullable|string',
+            'considerat' => 'nullable|string',
+            'purpose' => 'nullable|string',
+            'date_com' => 'nullable|string',
+            'term' => 'nullable|string',
+            'mul_claim' => 'nullable|string',
             'remarks' => 'nullable|string',
-            'map_numb' => 'nullable|string',
-            'la_tenure' => 'nullable|numeric',
+            't_code' => 'nullable|string',
+            'label_code' => 'nullable|string',
+            'plotted_by' => 'nullable|string',
+            'checked_by' => 'nullable|string',
+            'plott_date' => 'nullable|string',
+            'area' => 'nullable|numeric',
             'source' => 'nullable|string',
             'geom' => 'nullable',
         ]);
@@ -75,11 +91,11 @@ class SpParcelPvlmdController extends Controller
 
             $input = $request->all();
             $input['geom'] = $multipart;
-            $SpParcelPvlmd = SpParcelPvlmd::create($input);
+            $SpParcelLrd = SpParcelLrd::create($input);
 
             return response()->json([
-                'message' => 'Sp_ParcelPvlmd created successfully',
-                'body' => $SpParcelPvlmd
+                'message' => 'Sp_ParcelLrd created successfully',
+                'body' => $SpParcelLrd
             ], 200);
 
         } catch (\Exception $e) {
@@ -93,38 +109,41 @@ class SpParcelPvlmdController extends Controller
 
     public function index() {
 
-        $spParcelPvlmds = SpParcelPvlmd::all();
+        $SpParcelLrds = SpParcelLrd::selectRaw('id, cc_numb, ref_no, reg_no, cert_no, a_name, grantor,
+            locality, job_number, type_instr, date_ins, considerat, purpose, date_com, term, mul_claim,
+            remarks, t_code, label_code, plotted_by, checked_by, plott_date, area, ST_AsText(geom), source,
+            created_at, updated_at');
 
-        if($spParcelPvlmds->count()) {
+        if($SpParcelLrds->count()) {
 
             return response()->json([
-                'message' => 'Sp_ParcelPvlmd found',
-                'body' => $spParcelPvlmds
+                'message' => 'Sp_ParcelLrd found',
+                'body' => $SpParcelLrds->get()
             ], 200);
 
         }
 
         return response()->json([
-            'message' => 'Sp_ParcelPvlmd not found',
+            'message' => 'Sp_ParcelLrd not found',
             'body' => []
         ], 400);
     }
 
     public function read($id) {
 
-        $spParcelPvlmds = SpParcelPvlmd::where('id', '=', $id);
+        $SpParcelLrds = SpParcelLrd::where('id', '=', $id);
 
-        if($spParcelPvlmds->count()) {
+        if($SpParcelLrds->count()) {
 
             return response()->json([
-                'message' => 'SpParcelPvlmd found',
-                'body' => $spParcelPvlmds->first()
+                'message' => 'SpParcelLrd found',
+                'body' => $SpParcelLrds->first()
             ], 200);
 
         }
 
         return response()->json([
-            'message' => 'SpParcelPvlmd not found',
+            'message' => 'SpParcelLrd not found',
             'body' => []
         ], 400);
 
@@ -133,12 +152,28 @@ class SpParcelPvlmdController extends Controller
     public function update(Request $request, $id) {
         $validator = Validator::make($request->all(), [
 
-            'src_info' => 'nullable|numeric',
-            'src_date' => 'nullable|string',
-            'pvlmdid' => 'nullable|string',
+            'cc_numb' => 'nullable|string',
+            'ref_no' => 'nullable|string',
+            'reg_no' => 'nullable|string',
+            'cert_no' => 'nullable|string',
+            'a_name' => 'nullable|string',
+            'grantor' => 'nullable|string',
+            'locality' => 'nullable|string',
+            'job_number' => 'nullable|string',
+            'type_instr' => 'nullable|string',
+            'date_ins' => 'nullable|string',
+            'considerat' => 'nullable|string',
+            'purpose' => 'nullable|string',
+            'date_com' => 'nullable|string',
+            'term' => 'nullable|string',
+            'mul_claim' => 'nullable|string',
             'remarks' => 'nullable|string',
-            'map_numb' => 'nullable|string',
-            'la_tenure' => 'nullable|numeric',
+            't_code' => 'nullable|string',
+            'label_code' => 'nullable|string',
+            'plotted_by' => 'nullable|string',
+            'checked_by' => 'nullable|string',
+            'plott_date' => 'nullable|string',
+            'area' => 'nullable|numeric',
             'source' => 'nullable|string',
             'geom' => 'nullable',
         ]);
@@ -152,12 +187,12 @@ class SpParcelPvlmdController extends Controller
 
         try {
 
-            $SpParcelPvlmd = SpParcelPvlmd::where('id', '=', $id);
+            $SpParcelLrd = SpParcelLrd::where('id', '=', $id);
 
-            if( !$SpParcelPvlmd->count()) {
+            if( !$SpParcelLrd->count()) {
 
                 return response()->json([
-                    'message' => 'Sp ParcelPvlmd not found',
+                    'message' => 'Sp ParcelLrd not found',
                     'body' => []
                 ], 404);
             }
@@ -191,11 +226,11 @@ class SpParcelPvlmdController extends Controller
 
             $input = $request->all();
             $input['geom'] = $multipart;
-            $SpParcelPvlmd = $SpParcelPvlmd->update($input);
+            $SpParcelLrd = $SpParcelLrd->update($input);
 
             return response()->json([
-                'message' => 'Sp_ParcelPvlmd updated successfully',
-                'body' => $SpParcelPvlmd
+                'message' => 'Sp_ParcelLrd updated successfully',
+                'body' => $SpParcelLrd
             ], 200);
 
         } catch (\Exception $e) {
@@ -210,21 +245,21 @@ class SpParcelPvlmdController extends Controller
     public function destroy($id) {
 
         try {
-            $spParcelPvlmds = SpParcelPvlmd::where('id', '=', $id);
+            $SpParcelLrds = SpParcelLrd::where('id', '=', $id);
 
-            if(!$spParcelPvlmds->count()) {
+            if(!$SpParcelLrds->count()) {
 
                 return response()->json([
-                    'message' => 'No Sp_ParcelPvlmd found',
-                    'body' => $spParcelPvlmds->first()
+                    'message' => 'No Sp_ParcelLrd found',
+                    'body' => $SpParcelLrds->first()
                 ], 404);
 
             }
 
-            $spParcelPvlmds->first()->delete();
+            $SpParcelLrds->first()->delete();
 
             return response()->json([
-                'message' => 'Sp_ParcelPvlmd deleted',
+                'message' => 'Sp_ParcelLrd deleted',
                 'body' => []
             ], 200);
         } catch (\Exception $e) {
@@ -238,13 +273,13 @@ class SpParcelPvlmdController extends Controller
 
     public function findParcelByCoordinates(Request $request) {
 
-        logger()->debug('In search method');
-
         try {
             $geom = $request['geom'];
-            $coords = [];
 
+            $coords = [];
+            logger()->debug($geom);
             foreach ($geom as $point) {
+                logger()->debug($point['latitude']);
                 array_push($coords, new Point($point['latitude'], $point['longitude']));
             }
 
@@ -260,20 +295,20 @@ class SpParcelPvlmdController extends Controller
             }
             logger()->debug($coords->toWKT());
 
-            $foundParcel = SpParcelPvlmd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+            $foundParcel = SpParcelLrd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
                 ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
                 ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()]);
 
             if($foundParcel->count()) {
                 return response()->json([
-                    'message' => 'Pvlmd Parcels found',
+                    'message' => 'Lrd Parcels found',
                     'body' => $foundParcel->get(),
                     'query' => $coords->toWKT()
                 ], 200);
             }
 
             return response()->json([
-                'message' => 'No Pvlmd Parcels found',
+                'message' => 'No Lrd Parcels found',
                 'body' => [],
                 'query' => $coords->toWKT()
             ], 404);
@@ -296,19 +331,19 @@ class SpParcelPvlmdController extends Controller
 
             logger()->debug($wkt);
 
-            $foundParcel = SpParcelPvlmd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$wkt])
+            $foundParcel = SpParcelLrd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$wkt])
                 ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$wkt])
                 ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$wkt]);
 
             if($foundParcel->count()) {
                 return response()->json([
-                    'message' => 'Pvlmd Parcels found',
+                    'message' => 'Lrd Parcels found',
                     'body' => $foundParcel->get()
                 ], 200);
             }
 
             return response()->json([
-                'message' => 'No Pvlmd Parcels found',
+                'message' => 'No Lrd Parcels found',
                 'body' => []
             ], 404);
 
@@ -323,7 +358,7 @@ class SpParcelPvlmdController extends Controller
 
     public function overlaps($coords) {
 
-        $foundParcel = SpParcelPvlmd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+        $foundParcel = SpParcelLrd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
             ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
             ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()]);
 
@@ -331,5 +366,4 @@ class SpParcelPvlmdController extends Controller
             return true;
         else return false;
     }
-
 }
