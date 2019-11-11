@@ -150,6 +150,11 @@ Route::post('/bills', 'PaymentBillController@store');
 
 Route::get('/documents', 'DocumentController@index');
 Route::post('/documents', 'DocumentController@store');
+Route::put('/documents/transfer/{id}', 'DocumentController@transfer')->where('id', '[0-9]+');
+
+
+Route::get('/departments', 'DepartmentController@index');
+Route::post('/departments', 'DepartmentController@store');
 
 
 Route::any('/{id}', function(){
