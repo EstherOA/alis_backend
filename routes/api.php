@@ -143,10 +143,13 @@ Route::delete('/business-processes-checklists/{id}', 'BusinessProcessChecklistCo
 Route::get('/pending-applications', 'LrdPendingApplicationController@index');
 Route::post('/pending-applications', 'LrdPendingApplicationController@store');
 
+Route::post('/applications', 'LrdApplicationController@store');
+
 Route::get('/bills','PaymentBillController@index');
 Route::post('/bills', 'PaymentBillController@store');
 
 Route::get('/documents', 'DocumentController@index');
+Route::post('/documents', 'DocumentController@store');
 
 
 Route::any('/{id}', function(){

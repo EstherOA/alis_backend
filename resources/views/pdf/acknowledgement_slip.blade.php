@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Jekyll v3.8.5">
-    <title>Fees</title>
+    <title>Acknowledgement Slip</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/checkout/">
 
@@ -37,7 +37,7 @@
         <img class="d-block mx-auto mb-4" src="{{asset('images/land.jpeg')}}" alt="">
         <hr/>
         <h2>Lands Commission</h2>
-        <p class="lead">Service Bill</p>
+        <p class="lead">Acknowledgement Slip</p>
     </div>
 
     <div class="row">
@@ -46,26 +46,26 @@
                 <div class="row">
                     <div class="input-group col-md-8 mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">Bill Number</span>
+                            <span class="input-group-text" id="inputGroup-sizing-default">Service Type</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{$bill->id}}" aria-describedby="inputGroup-sizing-default">
+                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{$application->business_process_name}}" aria-describedby="inputGroup-sizing-default">
 
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-group col-md-8 mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">Client name</span>
+                            <span class="input-group-text" id="inputGroup-sizing-default">Case Number</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{$bill->customer_name}}" aria-describedby="inputGroup-sizing-default">
+                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{$application->case_number}}" aria-describedby="inputGroup-sizing-default">
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-group col-md-8 mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">Service Type</span>
+                            <span class="input-group-text" id="inputGroup-sizing-default">Client Name</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{$pendingApplication->business_process_name}}" aria-describedby="inputGroup-sizing-default">
+                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{$main_application->ar_name}}" aria-describedby="inputGroup-sizing-default">
                     </div>
                 </div>
                 <div class="row">
@@ -73,7 +73,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="inputGroup-sizing-default">Job Number</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{$pendingApplication->job_number}}" aria-describedby="inputGroup-sizing-default">
+                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{$application->job_number}}" aria-describedby="inputGroup-sizing-default">
                     </div>
                 </div>
                 <div class="row">
@@ -81,41 +81,45 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="inputGroup-sizing-default">Nature of Instrument</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Sizing example input" value="Consent" aria-describedby="inputGroup-sizing-default">
+                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{$main_application->nature_of_instrument}}" aria-describedby="inputGroup-sizing-default">
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-group col-md-8 mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">Quantity</span>
+                            <span class="input-group-text" id="inputGroup-sizing-default">Location</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Sizing example input" value="1" aria-describedby="inputGroup-sizing-default">
+                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{$main_application->locality}}" aria-describedby="inputGroup-sizing-default">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-group col-md-8 mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Date and Time</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{\Carbon\Carbon::parse($main_application->created_at)->format('l jS \\of F Y h:i:s A')}}" aria-describedby="inputGroup-sizing-default">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-group col-md-8 mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Date of Collection</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Sizing example input" value="{{\Carbon\Carbon::parse($main_application->created_at)->addDays(4)->toDateString()}}" aria-describedby="inputGroup-sizing-default">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-group col-md-8 mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Note</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Sizing example input" value="Date and Time for Collection is Subject to Change" aria-describedby="inputGroup-sizing-default">
                     </div>
                 </div>
 
             </form>
         </div>
-        <div class="col-md-12 mb-4">
-            <h4 class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted">Details of Fees</span>
 
-            </h4>
-            <ul class="list-group mb-3">
-                @foreach($process_fees as $fee)
-                <li class="list-group-item d-flex justify-content-between lh-condensed">
-                    <div>
-                        <h6 class="my-0">{{$fee->name}}</h6>
-                        <small class="text-muted">{{$fee->description}}</small>
-                    </div>
-                    <span class="text-muted">GH&#8373;{{$fee->amount}}</span>
-                </li>
-                @endforeach
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Total</span>
-                    <strong>GH&#8373;{{$bill->bill_amount}}</strong>
-                </li>
-            </ul>
-        </div>
         <div class="col-md-12 ">
             <div class="input-group col-md-6 mb-3 float-right mr-0 pr-0" >
                 <div class="input-group-prepend">
