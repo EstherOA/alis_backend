@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use phpseclib\Crypt\Hash;
 
 class SessionsController extends Controller
 {
@@ -24,12 +26,16 @@ class SessionsController extends Controller
             ], 400);
         }
         try {
+            $credentials = $request->only('email', 'password');
 
-            if(Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
+            if(Auth::attempt($credentials)) {
+
+                $token = Auth::user()->createToken('alis')->accessToken;
 
                 return response()->json([
-                    'message' => 'Error while authenticating user',
-                    'body' => Auth::user()
+                    'message' => 'Login Successful',
+                    'body' => Auth::user(),
+                    'token' => $token
                 ], 200);
             }
 
@@ -51,6 +57,7 @@ class SessionsController extends Controller
     public function logout(Request $request) {
 
         try {
+
             $request->user()->token()->revoke();
 
             return response()->json([

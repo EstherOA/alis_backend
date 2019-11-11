@@ -18,80 +18,101 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('sp-beacon-cadastrals', 'API\SpBeaconCadastralController@store'); //Fixme add auth middleware
-Route::get('sp-beacon-cadastrals', 'API\SpBeaconCadastralController@index'); //Fixme add auth middleware
-Route::get('sp-beacon-cadastrals/{id}', 'API\SpBeaconCadastralController@read'); //Fixme add auth middleware
-Route::post('sp-beacon-cadastrals/{id}', 'API\SpBeaconCadastralController@update'); //Fixme add auth middleware
-Route::delete('sp-beacon-cadastrals/{id}', 'API\SpBeaconCadastralController@destroy'); //Fixme add auth middleware
+Route::group([
+    'middleware' => ['auth:api', 'roles']
+], function () {
+    Route::get('logout', 'SessionsController@logout');
+});
+Route::get('email/activate/{token}', 'RegistrationController@emailVerification');
+Route::post('login', 'SessionsController@login');
+Route::post('register', 'RegistrationController@store');
 
-Route::post('sp-beacon-lrd', 'API\SpBeaconLrdController@store'); //Fixme add auth middleware
-Route::get('sp-beacon-lrd', 'API\SpBeaconLrdController@index'); //Fixme add auth middleware
-Route::get('sp-beacon-lrd/{id}', 'API\SpBeaconLrdController@read'); //Fixme add auth middleware
-Route::post('sp-beacon-lrd/{id}', 'API\SpBeaconLrdController@update'); //Fixme add auth middleware
-Route::delete('sp-beacon-lrd/{id}', 'API\SpBeaconLrdController@destroy'); //Fixme add auth middleware
 
-Route::post('sp-beacon-smd', 'API\SpBeaconSmdController@store'); //Fixme add auth middleware
-Route::get('sp-beacon-smd', 'API\SpBeaconSmdController@index'); //Fixme add auth middleware
-Route::get('sp-beacon-smd/{id}', 'API\SpBeaconSmdController@read'); //Fixme add auth middleware
-Route::post('sp-beacon-smd/{id}', 'API\SpBeaconSmdController@update'); //Fixme add auth middleware
-Route::delete('sp-beacon-smd/{id}', 'API\SpBeaconSmdController@destroy'); //Fixme add auth middleware
+Route::group([
+    'prefix' => 'password'
+], function () {
+    Route::post('create', 'PasswordResetController@create')->middleware('auth:api');
+    Route::post('reset', 'PasswordResetController@reset')->middleware('auth:api');
+    Route::get('find/{token}', 'PasswordResetController@find');
+});
 
-Route::post('sp-cadastral', 'API\SpCadastralController@store'); //Fixme add auth middleware
-Route::get('sp-cadastral', 'API\SpCadastralController@index'); //Fixme add auth middleware
-Route::get('sp-cadastral/{id}', 'API\SpCadastralController@read'); //Fixme add auth middleware
-Route::post('sp-cadastral/{id}', 'API\SpCadastralController@update'); //Fixme add auth middleware
-Route::delete('sp-cadastral/{id}', 'API\SpCadastralController@destroy'); //Fixme add auth middleware
+Route::post('sp-beacon-cadastrals', 'SpBeaconCadastralController@store'); //Fixme add auth middleware
+Route::get('sp-beacon-cadastrals', 'SpBeaconCadastralController@index'); //Fixme add auth middleware
+Route::get('sp-beacon-cadastrals/{id}', 'SpBeaconCadastralController@read'); //Fixme add auth middleware
+Route::post('sp-beacon-cadastrals/{id}', 'SpBeaconCadastralController@update'); //Fixme add auth middleware
+Route::delete('sp-beacon-cadastrals/{id}', 'SpBeaconCadastralController@destroy'); //Fixme add auth middleware
 
-Route::post('sp-district', 'API\SpDistrictController@store'); //Fixme add auth middleware
-Route::get('sp-district', 'API\SpDistrictController@index'); //Fixme add auth middleware
-Route::get('sp-district/{id}', 'API\SpDistrictController@read'); //Fixme add auth middleware
-Route::post('sp-district/{id}', 'API\SpDistrictController@update'); //Fixme add auth middleware
-Route::delete('sp-district/{id}', 'API\SpDistrictController@destroy'); //Fixme add auth middleware
+Route::post('sp-beacon-lrd', 'SpBeaconLrdController@store'); //Fixme add auth middleware
+Route::get('sp-beacon-lrd', 'SpBeaconLrdController@index'); //Fixme add auth middleware
+Route::get('sp-beacon-lrd/{id}', 'SpBeaconLrdController@read'); //Fixme add auth middleware
+Route::post('sp-beacon-lrd/{id}', 'SpBeaconLrdController@update'); //Fixme add auth middleware
+Route::delete('sp-beacon-lrd/{id}', 'SpBeaconLrdController@destroy'); //Fixme add auth middleware
 
-Route::post('sp-parcel-lrd', 'API\SpParcelLrdController@store'); //Fixme add auth middleware
-Route::get('sp-parcel-lrd', 'API\SpParcelLrdController@index'); //Fixme add auth middleware
-Route::get('sp-parcel-lrd/{id}', 'API\SpParcelLrdController@read'); //Fixme add auth middleware
-Route::post('sp-parcel-lrd/{id}', 'API\SpParcelLrdController@update'); //Fixme add auth middleware
-Route::delete('sp-parcel-lrd/{id}', 'API\SpParcelLrdController@destroy'); //Fixme add auth middleware
-Route::post('search-lrd', 'API\SpParcelLrdController@findParcelByCoordinates'); //Fixme add auth middleware
+Route::post('sp-beacon-smd', 'SpBeaconSmdController@store'); //Fixme add auth middleware
+Route::get('sp-beacon-smd', 'SpBeaconSmdController@index'); //Fixme add auth middleware
+Route::get('sp-beacon-smd/{id}', 'SpBeaconSmdController@read'); //Fixme add auth middleware
+Route::post('sp-beacon-smd/{id}', 'SpBeaconSmdController@update'); //Fixme add auth middleware
+Route::delete('sp-beacon-smd/{id}', 'SpBeaconSmdController@destroy'); //Fixme add auth middleware
 
-Route::post('sp-parcel-pvlmd', 'API\SpParcelPvlmdController@store'); //Fixme add auth middleware
-Route::get('sp-parcel-pvlmd', 'API\SpParcelPvlmdController@index'); //Fixme add auth middleware
-Route::get('sp-parcel-pvlmd/{id}', 'API\SpParcelPvlmdController@read'); //Fixme add auth middleware
-Route::post('sp-parcel-pvlmd/{id}', 'API\SpParcelPvlmdController@update'); //Fixme add auth middleware
-Route::delete('sp-parcel-pvlmd/{id}', 'API\SpParcelPvlmdController@destroy'); //Fixme add auth middleware
-Route::post('search-pvlmd', 'API\SpParcelPvlmdController@findParcelByCoordinates'); //Fixme add auth middleware
+Route::post('sp-cadastral', 'SpCadastralController@store'); //Fixme add auth middleware
+Route::get('sp-cadastral', 'SpCadastralController@index'); //Fixme add auth middleware
+Route::get('sp-cadastral/{id}', 'SpCadastralController@read'); //Fixme add auth middleware
+Route::post('sp-cadastral/{id}', 'SpCadastralController@update'); //Fixme add auth middleware
+Route::delete('sp-cadastral/{id}', 'SpCadastralController@destroy'); //Fixme add auth middleware
 
-Route::post('sp-parcel-smd', 'API\SpParcelSmdController@store'); //Fixme add auth middleware
-Route::get('sp-parcel-smd', 'API\SpParcelSmdController@index'); //Fixme add auth middleware
-Route::get('sp-parcel-smd/{id}', 'API\SpParcelSmdController@read'); //Fixme add auth middleware
-Route::post('sp-parcel-smd/{id}', 'API\SpParcelSmdController@update'); //Fixme add auth middleware
-Route::delete('sp-parcel-smd/{id}', 'API\SpParcelSmdController@destroy'); //Fixme add auth middleware
-Route::post('search-smd', 'API\SpParcelSmdController@findParcelByCoordinates'); //Fixme add auth middleware
+Route::post('sp-district', 'SpDistrictController@store'); //Fixme add auth middleware
+Route::get('sp-district', 'SpDistrictController@index'); //Fixme add auth middleware
+Route::get('sp-district/{id}', 'SpDistrictController@read'); //Fixme add auth middleware
+Route::post('sp-district/{id}', 'SpDistrictController@update'); //Fixme add auth middleware
+Route::delete('sp-district/{id}', 'SpDistrictController@destroy'); //Fixme add auth middleware
 
-Route::post('sp-regional-boundary', 'API\SpRegionalBoundaryController@store'); //Fixme add auth middleware
-Route::get('sp-regional-boundary', 'API\SpRegionalBoundaryController@index'); //Fixme add auth middleware
-Route::get('sp-regional-boundary/{id}', 'API\SpRegionalBoundaryController@read'); //Fixme add auth middleware
-Route::post('sp-regional-boundary/{id}', 'API\SpRegionalBoundaryController@update'); //Fixme add auth middleware
-Route::delete('sp-regional-boundary/{id}', 'API\SpRegionalBoundaryController@destroy'); //Fixme add auth middleware
+Route::post('sp-parcel-lrd', 'SpParcelLrdController@store'); //Fixme add auth middleware
+Route::get('sp-parcel-lrd', 'SpParcelLrdController@index'); //Fixme add auth middleware
+Route::get('sp-parcel-lrd/{id}', 'SpParcelLrdController@read'); //Fixme add auth middleware
+Route::post('sp-parcel-lrd/{id}', 'SpParcelLrdController@update'); //Fixme add auth middleware
+Route::delete('sp-parcel-lrd/{id}', 'SpParcelLrdController@destroy'); //Fixme add auth middleware
+Route::post('search-lrd', 'SpParcelLrdController@findParcelByCoordinates'); //Fixme add auth middleware
+Route::post('search-lrd/wkt', 'SpParcelLrdController@wktSearch'); //Fixme add auth middleware
 
-Route::post('sp-registration-block-boundary', 'API\SpRegistrationBlockBoundaryController@store'); //Fixme add auth middleware
-Route::get('sp-registration-block-boundary', 'API\SpRegistrationBlockBoundaryController@index'); //Fixme add auth middleware
-Route::get('sp-registration-block-boundary/{id}', 'API\SpRegistrationBlockBoundaryController@read'); //Fixme add auth middleware
-Route::post('sp-registration-block-boundary/{id}', 'API\SpRegistrationBlockBoundaryController@update'); //Fixme add auth middleware
-Route::delete('sp-registration-block-boundary/{id}', 'API\SpRegistrationBlockBoundaryController@destroy'); //Fixme add auth middleware
+Route::post('sp-parcel-pvlmd', 'SpParcelPvlmdController@store'); //Fixme add auth middleware
+Route::get('sp-parcel-pvlmd', 'SpParcelPvlmdController@index'); //Fixme add auth middleware
+Route::get('sp-parcel-pvlmd/{id}', 'SpParcelPvlmdController@read'); //Fixme add auth middleware
+Route::post('sp-parcel-pvlmd/{id}', 'SpParcelPvlmdController@update'); //Fixme add auth middleware
+Route::delete('sp-parcel-pvlmd/{id}', 'SpParcelPvlmdController@destroy'); //Fixme add auth middleware
+Route::post('search-pvlmd', 'SpParcelPvlmdController@findParcelByCoordinates'); //Fixme add auth middleware
+Route::post('search-pvlmd/wkt', 'SpParcelPvlmdController@wktSearch'); //Fixme add auth middleware
 
-Route::post('sp-registration-district-boundary', 'API\SpRegistrationDistrictBoundaryController@store'); //Fixme add auth middleware
-Route::get('sp-registration-district-boundary', 'API\SpRegistrationDistrictBoundaryController@index'); //Fixme add auth middleware
-Route::get('sp-registration-district-boundary/{id}', 'API\SpRegistrationDistrictBoundaryController@read'); //Fixme add auth middleware
-Route::post('sp-registration-district-boundary/{id}', 'API\SpRegistrationDistrictBoundaryController@update'); //Fixme add auth middleware
-Route::delete('sp-registration-district-boundary/{id}', 'API\SpRegistrationDistrictBoundaryController@destroy'); //Fixme add auth middleware
+Route::post('sp-parcel-smd', 'SpParcelSmdController@store'); //Fixme add auth middleware
+Route::get('sp-parcel-smd', 'SpParcelSmdController@index'); //Fixme add auth middleware
+Route::get('sp-parcel-smd/{id}', 'SpParcelSmdController@read'); //Fixme add auth middleware
+Route::post('sp-parcel-smd/{id}', 'SpParcelSmdController@update'); //Fixme add auth middleware
+Route::delete('sp-parcel-smd/{id}', 'SpParcelSmdController@destroy'); //Fixme add auth middleware
+Route::post('search-smd', 'SpParcelSmdController@findParcelByCoordinates'); //Fixme add auth middleware
+Route::post('search-smd/wkt', 'SpParcelSmdController@wktSearch'); //Fixme add auth middleware
 
-Route::post('sp-registration-sector-boundary', 'API\SpRegistrationSectorBoundaryController@store'); //Fixme add auth middleware
-Route::get('sp-registration-sector-boundary', 'API\SpRegistrationSectorBoundaryController@index'); //Fixme add auth middleware
-Route::get('sp-registration-sector-boundary/{id}', 'API\SpRegistrationSectorBoundaryController@read'); //Fixme add auth middleware
-Route::post('sp-registration-sector-boundary/{id}', 'API\SpRegistrationSectorBoundaryController@update'); //Fixme add auth middleware
-Route::delete('sp-registration-sector-boundary/{id}', 'API\SpRegistrationSectorBoundaryController@destroy'); //Fixme add auth middleware
+Route::post('sp-regional-boundary', 'SpRegionalBoundaryController@store'); //Fixme add auth middleware
+Route::get('sp-regional-boundary', 'SpRegionalBoundaryController@index'); //Fixme add auth middleware
+Route::get('sp-regional-boundary/{id}', 'SpRegionalBoundaryController@read'); //Fixme add auth middleware
+Route::post('sp-regional-boundary/{id}', 'SpRegionalBoundaryController@update'); //Fixme add auth middleware
+Route::delete('sp-regional-boundary/{id}', 'SpRegionalBoundaryController@destroy'); //Fixme add auth middleware
+
+Route::post('sp-registration-block-boundary', 'SpRegistrationBlockBoundaryController@store'); //Fixme add auth middleware
+Route::get('sp-registration-block-boundary', 'SpRegistrationBlockBoundaryController@index'); //Fixme add auth middleware
+Route::get('sp-registration-block-boundary/{id}', 'SpRegistrationBlockBoundaryController@read'); //Fixme add auth middleware
+Route::post('sp-registration-block-boundary/{id}', 'SpRegistrationBlockBoundaryController@update'); //Fixme add auth middleware
+Route::delete('sp-registration-block-boundary/{id}', 'SpRegistrationBlockBoundaryController@destroy'); //Fixme add auth middleware
+
+Route::post('sp-registration-district-boundary', 'SpRegistrationDistrictBoundaryController@store'); //Fixme add auth middleware
+Route::get('sp-registration-district-boundary', 'SpRegistrationDistrictBoundaryController@index'); //Fixme add auth middleware
+Route::get('sp-registration-district-boundary/{id}', 'SpRegistrationDistrictBoundaryController@read'); //Fixme add auth middleware
+Route::post('sp-registration-district-boundary/{id}', 'SpRegistrationDistrictBoundaryController@update'); //Fixme add auth middleware
+Route::delete('sp-registration-district-boundary/{id}', 'SpRegistrationDistrictBoundaryController@destroy'); //Fixme add auth middleware
+
+Route::post('sp-registration-sector-boundary', 'SpRegistrationSectorBoundaryController@store'); //Fixme add auth middleware
+Route::get('sp-registration-sector-boundary', 'SpRegistrationSectorBoundaryController@index'); //Fixme add auth middleware
+Route::get('sp-registration-sector-boundary/{id}', 'SpRegistrationSectorBoundaryController@read'); //Fixme add auth middleware
+Route::post('sp-registration-sector-boundary/{id}', 'SpRegistrationSectorBoundaryController@update'); //Fixme add auth middleware
+Route::delete('sp-registration-sector-boundary/{id}', 'SpRegistrationSectorBoundaryController@destroy'); //Fixme add auth middleware
 
 Route::get('/business-processes', 'BusinessProcessController@index');
 Route::post('/business-processes', 'BusinessProcessController@store');
@@ -135,7 +156,6 @@ Route::put('/documents/transfer/{id}', 'DocumentController@transfer')->where('id
 Route::get('/departments', 'DepartmentController@index');
 Route::post('/departments', 'DepartmentController@store');
 
-Route::get('email/activate/{token}', 'RegistrationController@emailVerification');
 
 Route::any('/{id}', function(){
     return response()->json(['message' => "resource not found", 'data' => []],404);

@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -10,7 +11,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class activateEmail extends Notification
+class activateEmail extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -50,7 +51,7 @@ class activateEmail extends Notification
             $token = Str::random(32);
 
             while(!$found) {
-                $existingToken = DB::table('tokens')->where('token', '=', $token );
+                $existingToken = User::where('activation_token', '=', $token);
 
                 if($existingToken->count()) {
                     $token = Str::random(32);
@@ -59,22 +60,20 @@ class activateEmail extends Notification
                 }
             }
 
-            $input['token'] = $token;
-            $input['type'] = 'activation';
-            $input['expires_at'] = Carbon::now()->addDay();
-            $input['user_id'] = $notifiable->id;
-
-            DB::table('tokens')->insert($input);
+            $notifiable->activation_token = $token;
+            $notifiable->save();
 
             $url = url('/api/email/activate/'.$token);
             return (new MailMessage)
                 ->subject('Confirm your account')
+                ->greeting('Hello!')
                 ->line('Please activate your account')
-                ->action('Confirm Account', url($url))
+                ->action('Confirm Account', $url)
                 ->line('Thank you for using our application!');
 
         } catch (\Exception $e) {
 
+            logger()->debug($e->getTraceAsString());
             return response()->json([
                 'message' => 'Error while sending activation email',
                 'body' => $e->getMessage()
