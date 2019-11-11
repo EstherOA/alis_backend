@@ -260,7 +260,7 @@ class SpParcelPvlmdController extends Controller
             }
             logger()->debug($coords->toWKT());
 
-            $foundParcel = SpParcelPvlmd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+            $foundParcel = SpParcelPvlmd::whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
                 ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
                 ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()]);
 
@@ -296,7 +296,7 @@ class SpParcelPvlmdController extends Controller
 
             logger()->debug($wkt);
 
-            $foundParcel = SpParcelPvlmd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$wkt])
+            $foundParcel = SpParcelPvlmd::whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$wkt])
                 ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$wkt])
                 ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$wkt]);
 
@@ -323,7 +323,7 @@ class SpParcelPvlmdController extends Controller
 
     public function overlaps($coords) {
 
-        $foundParcel = SpParcelPvlmd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+        $foundParcel = SpParcelPvlmd::whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
             ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
             ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()]);
 

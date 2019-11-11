@@ -295,7 +295,10 @@ class SpParcelLrdController extends Controller
             }
             logger()->debug($coords->toWKT());
 
-            $foundParcel = SpParcelLrd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+            $foundParcel = SpParcelLrd::selectRaw('id, cc_numb, ref_no, reg_no, cert_no, a_name, grantor,
+            locality, job_number, type_instr, date_ins, considerat, purpose, date_com, term, mul_claim,
+            remarks, t_code, label_code, plotted_by, checked_by, plott_date, area, ST_AsText(geom), source,
+            created_at, updated_at')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
                 ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
                 ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()]);
 
@@ -331,7 +334,10 @@ class SpParcelLrdController extends Controller
 
             logger()->debug($wkt);
 
-            $foundParcel = SpParcelLrd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$wkt])
+            $foundParcel = SpParcelLrd::selectRaw('id, cc_numb, ref_no, reg_no, cert_no, a_name, grantor,
+            locality, job_number, type_instr, date_ins, considerat, purpose, date_com, term, mul_claim,
+            remarks, t_code, label_code, plotted_by, checked_by, plott_date, area, ST_AsText(geom), source,
+            created_at, updated_at')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$wkt])
                 ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$wkt])
                 ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$wkt]);
 
@@ -358,7 +364,10 @@ class SpParcelLrdController extends Controller
 
     public function overlaps($coords) {
 
-        $foundParcel = SpParcelLrd::select('id', 'geom')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+        $foundParcel = SpParcelLrd::selectRaw('id, cc_numb, ref_no, reg_no, cert_no, a_name, grantor,
+            locality, job_number, type_instr, date_ins, considerat, purpose, date_com, term, mul_claim,
+            remarks, t_code, label_code, plotted_by, checked_by, plott_date, area, ST_AsText(geom), source,
+            created_at, updated_at')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
             ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
             ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()]);
 
