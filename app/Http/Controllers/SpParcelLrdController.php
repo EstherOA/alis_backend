@@ -298,8 +298,8 @@ class SpParcelLrdController extends Controller
             locality, job_number, type_instr, date_ins, considerat, purpose, date_com, term, mul_claim,
             remarks, t_code, label_code, plotted_by, checked_by, plott_date, area, ST_AsText(geom), source,
             created_at, updated_at')
-//                ->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()]);
-//                ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+                ->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+                ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
                 ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()]);
 //
             if($foundParcel->count()) {
