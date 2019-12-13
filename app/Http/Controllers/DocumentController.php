@@ -69,6 +69,7 @@ class DocumentController extends Controller
     }
 
     public function transfer(Request $request, $id){ // move a file from one location to another
+        Log::info($id);
         $validator = Validator::make($request->all(), [
             'remarks' => 'required|string',
             'department_to' => 'required',//|exists:departments,id
@@ -79,6 +80,7 @@ class DocumentController extends Controller
         } else {
             try {
                 $document = DB::transaction(function () use($id) {
+
                     $document = Document::findOrFail($id);
                     $document_history = new DocumentTransaction();
                     $document_history->file_id = $document->id;
@@ -95,7 +97,8 @@ class DocumentController extends Controller
                     $document_history->department_from_id = 0;
                     $document_history->department_to_id = 1; //fixme: current authenticated user's department
                     $document_history->save();
-                    $document->department = Department::find(\request('department_to'))->name;
+//                    $document->department = Department::find(\request('department_to'))->name;
+                    $document->department = \request('department_to');
                     $document->save();
 
                     return $document;
