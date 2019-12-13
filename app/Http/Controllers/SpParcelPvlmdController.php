@@ -93,13 +93,15 @@ class SpParcelPvlmdController extends Controller
 
     public function index() {
 
-        $spParcelPvlmds = SpParcelPvlmd::all();
+        $spParcelPvlmds = SpParcelPvlmd::selectRaw('id, remarks, src_date, pvlmdid, map_numb,
+                        src_info, la_tenure, ST_AsText(geom), source, created_at, updated_at');
 
         if($spParcelPvlmds->count()) {
 
+
             return response()->json([
                 'message' => 'Sp_ParcelPvlmd found',
-                'body' => $spParcelPvlmds
+                'body' => $spParcelPvlmds->get()
             ], 200);
 
         }
