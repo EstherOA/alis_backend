@@ -19,13 +19,17 @@ class CreateUsersTable extends Migration
             $table->string('last_name');
             $table->bigInteger('phone_number');
             $table->string('email')->unique();
-            $table->boolean('is_active')->default(false);
+//            $table->boolean('active')->default(false);
+            $table->string('activation_token')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamp('phone_verified_at')->nullable();
             $table->string('password');
+            $table->unsignedInteger('role_id');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
+
     }
 
     /**

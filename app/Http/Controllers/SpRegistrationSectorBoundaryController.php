@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use App\SpRegionalBoundary;
+use App\SpRegistrationSectorBoundary;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -11,7 +11,7 @@ use Phaza\LaravelPostgis\Geometries\MultiPolygon;
 use Phaza\LaravelPostgis\Geometries\Point;
 use Phaza\LaravelPostgis\Geometries\Polygon;
 
-class SpRegionalBoundaryController extends Controller
+class SpRegistrationSectorBoundaryController extends Controller
 {
     //
     public function store(Request $request) {
@@ -23,8 +23,11 @@ class SpRegionalBoundaryController extends Controller
             'object_id' => 'nullable|numeric',
             'shape_leng' => 'nullable|numeric',
             'shape_area' => 'nullable|numeric',
-            'regioid' => 'nullable|numeric',
-            'src_info' => 'nullable|numeric',
+            'regioid' => 'nullable|string',
+            'distriid' => 'nullable|string',
+            'sectioid' => 'nullable|string',
+            'loc_name' => 'nullable|string',
+            'src_info' => 'nullable|string',
             'src_date' => 'nullable|date',
             'reg_name' => 'nullable|string'
         ]);
@@ -66,11 +69,11 @@ class SpRegionalBoundaryController extends Controller
 
             $input = $request->all();
             $input['geom'] = $multipart;
-            $SpRegionalBoundary = SpRegionalBoundary::create($input);
+            $SpRegistrationSectorBoundary = SpRegistrationSectorBoundary::create($input);
 
             return response()->json([
-                'message' => 'Sp_RegionalBoundary created successfully',
-                'body' => $SpRegionalBoundary
+                'message' => 'Sp_RegistrationSectorBoundary created successfully',
+                'body' => $SpRegistrationSectorBoundary
             ], 200);
 
         } catch (\Exception $e) {
@@ -84,38 +87,38 @@ class SpRegionalBoundaryController extends Controller
 
     public function index() {
 
-        $SpRegionalBoundarys = SpRegionalBoundary::all();
+        $spRegistrationSectorBoundaries = SpRegistrationSectorBoundary::all();
 
-        if($SpRegionalBoundarys->count()) {
+        if($spRegistrationSectorBoundaries->count()) {
 
             return response()->json([
-                'message' => 'Sp_RegionalBoundary found',
-                'body' => $SpRegionalBoundarys
+                'message' => 'Sp_RegistrationSectorBoundary found',
+                'body' => $spRegistrationSectorBoundaries
             ], 200);
 
         }
 
         return response()->json([
-            'message' => 'Sp_RegionalBoundary not found',
+            'message' => 'Sp_RegistrationSectorBoundary not found',
             'body' => []
         ], 400);
     }
 
     public function read($id) {
 
-        $SpRegionalBoundarys = SpRegionalBoundary::where('id', '=', $id);
+        $spRegistrationSectorBoundaries = SpRegistrationSectorBoundary::where('id', '=', $id);
 
-        if($SpRegionalBoundarys->count()) {
+        if($spRegistrationSectorBoundaries->count()) {
 
             return response()->json([
-                'message' => 'SpRegionalBoundary found',
-                'body' => $SpRegionalBoundarys->first()
+                'message' => 'SpRegistrationSectorBoundary found',
+                'body' => $spRegistrationSectorBoundaries->first()
             ], 200);
 
         }
 
         return response()->json([
-            'message' => 'SpRegionalBoundary not found',
+            'message' => 'SpRegistrationSectorBoundary not found',
             'body' => []
         ], 400);
 
@@ -128,8 +131,11 @@ class SpRegionalBoundaryController extends Controller
             'object_id' => 'nullable|numeric',
             'shape_leng' => 'nullable|numeric',
             'shape_area' => 'nullable|numeric',
-            'regioid' => 'nullable|numeric',
-            'src_info' => 'nullable|numeric',
+            'regioid' => 'nullable|string',
+            'distriid' => 'nullable|string',
+            'sectioid' => 'nullable|string',
+            'loc_name' => 'nullable|string',
+            'src_info' => 'nullable|string',
             'src_date' => 'nullable|date',
             'reg_name' => 'nullable|string'
         ]);
@@ -143,12 +149,12 @@ class SpRegionalBoundaryController extends Controller
 
         try {
 
-            $SpRegionalBoundary = SpRegionalBoundary::where('id', '=', $id);
+            $SpRegistrationSectorBoundary = SpRegistrationSectorBoundary::where('id', '=', $id);
 
-            if( !$SpRegionalBoundary->count()) {
+            if( !$SpRegistrationSectorBoundary->count()) {
 
                 return response()->json([
-                    'message' => 'Sp RegionalBoundary not found',
+                    'message' => 'Sp RegistrationSectorBoundary not found',
                     'body' => []
                 ], 404);
             }
@@ -182,11 +188,11 @@ class SpRegionalBoundaryController extends Controller
 
             $input = $request->all();
             $input['geom'] = $multipart;
-            $SpRegionalBoundary = $SpRegionalBoundary->update($input);
+            $SpRegistrationSectorBoundary = $SpRegistrationSectorBoundary->update($input);
 
             return response()->json([
-                'message' => 'Sp_RegionalBoundary updated successfully',
-                'body' => $SpRegionalBoundary
+                'message' => 'Sp_RegistrationSectorBoundary updated successfully',
+                'body' => $SpRegistrationSectorBoundary
             ], 200);
 
         } catch (\Exception $e) {
@@ -201,21 +207,21 @@ class SpRegionalBoundaryController extends Controller
     public function destroy($id) {
 
         try {
-            $SpRegionalBoundarys = SpRegionalBoundary::where('id', '=', $id);
+            $spRegistrationSectorBoundaries = SpRegistrationSectorBoundary::where('id', '=', $id);
 
-            if(!$SpRegionalBoundarys->count()) {
+            if(!$spRegistrationSectorBoundaries->count()) {
 
                 return response()->json([
-                    'message' => 'No Sp_RegionalBoundary found',
-                    'body' => $SpRegionalBoundarys->first()
+                    'message' => 'No Sp_RegistrationSectorBoundary found',
+                    'body' => $spRegistrationSectorBoundaries->first()
                 ], 404);
 
             }
 
-            $SpRegionalBoundarys->first()->delete();
+            $spRegistrationSectorBoundaries->first()->delete();
 
             return response()->json([
-                'message' => 'Sp_RegionalBoundary deleted',
+                'message' => 'Sp_RegistrationSectorBoundary deleted',
                 'body' => []
             ], 200);
         } catch (\Exception $e) {

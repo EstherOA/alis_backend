@@ -4,22 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Notifications\activateEmail;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class RegistrationController extends Controller
 {
-    //
 
     public function store(Request $request) {
 
         $validator = Validator::make($request->all(), [
-           "first_name" => "required|string",
+           'first_name' => 'required|string',
            "last_name" => "required|string",
            "email" => "required|email",
            "phone_number" => "required|digits:10",
-           "password" => "required|confirmed"
+           "password" => "required|string"
         ]);
 
         if($validator->fails()) {
@@ -33,12 +33,13 @@ class RegistrationController extends Controller
             $newUser->first_name = $request['first_name'];
             $newUser->last_name = $request['last_name'];
             $newUser->email = $request['email'];
-            $newUser->password = bcrypt($request['first_name']);
+            $newUser->password = bcrypt($request['password']);
             $newUser->phone_number = $request['phone_number'];
+            $newUser->role_id = 1;
             $newUser->save();
 
             //create token
-            $token = $newUser->createToken('payvm')->accessToken;
+            $token = $newUser->createToken('alis')->accessToken;
 
             //verify email
             $newUser->notify(new activateEmail($newUser));
@@ -61,20 +62,31 @@ class RegistrationController extends Controller
 
     public function emailVerification($token)
     {
-        $existingToken = DB::table('tokens')->where('token', '=', $token)->first();
-        if (!$existingToken) {
+        try{
+
+            $user = User::where('activation_token', '=', $token);
+
+//            logger()->debug($user->first());
+            if (!$user->count()) {
+                return response()->json([
+                    'message' => 'Invalid activation token',
+                    'body' => ''
+                ], 404);
+            }
+            $user = $user->first();
+            $user->email_verified_at = Carbon::now();
+            $user->save();
             return response()->json([
-                'message' => 'Invalid activation token'
-            ], 404);
+                'message' => 'Email verified successfully',
+                'body' => $user
+            ], 200 );
+        }catch(\Exception $e) {
+
+            return response()->json([
+                'message' => 'Email verification failed',
+                'body' => $e->getMessage()
+            ], 500);
         }
-
-        $user = User::where('id', '=', $existingToken->user_id)->first();
-
-        $user->is_active = true;
-        $user->save();
-        return response()->json([
-
-        ]);
     }
 
 }
