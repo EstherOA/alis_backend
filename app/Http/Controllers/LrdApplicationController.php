@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Document;
 use App\LrdApplication;
 use App\LrdMainApplication;
 use App\LrdPendingApplication;
@@ -14,6 +15,19 @@ use Illuminate\Support\Facades\Validator;
 
 class LrdApplicationController extends Controller
 {
+    public function index($case_number){
+        try {
+            $case = LrdMainApplication::where('case_number', '=', $case_number)->count();
+            if(!$case){
+                return response()->json(['message' => 'Invalid case', 'data' => []], 400);
+            }
+            $caseJobs = LrdApplication::getAllJobsByCase($case_number);
+            return response()->json(['message' => 'OK', 'data' => $caseJobs], 200);
+        } catch (\Exception $e){
+            return response()->json(['message' => 'Internal Server Error', 'data' => $e], 500);
+        }
+
+    }
     public function store(Request $request){
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
@@ -66,6 +80,8 @@ class LrdApplicationController extends Controller
                     $main_application->created_by = "David Marfo";
                     $main_application->created_by_id = 1; //fixme: change to authenticated user id
                     $main_application->save();
+                    $pendingApplication->status = "completed";
+                    $pendingApplication->save();
                     return $main_application->id;
                 });
                 return response()->json(['message' => 'Business process fee successfully created', 'data' => ["url" => url('generate-pdf/acknowledgement/'.$id)]], 201);
@@ -76,4 +92,6 @@ class LrdApplicationController extends Controller
         }
 
     }
+
+
 }

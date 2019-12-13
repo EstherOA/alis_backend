@@ -47,6 +47,7 @@ class CreateLrdPendingApplicationsTable extends Migration
             $table->text('district')->nullable();
             $table->text('region')->nullable();
             $table->integer('bill_number')->nullable();
+            $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }

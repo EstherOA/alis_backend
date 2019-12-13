@@ -19,6 +19,17 @@ class BusinessProcessFeeController extends Controller
         return response()->json(['message' => "", 'data' => $businessProcessFees], 200);
     }
 
+    public function getByProcess(){
+        if(\request('business_sub_process_id') == ""
+            || \request('business_sub_process_id') == null
+            || \request('business_process_id') == null)
+            return response()->json(['message' => "Bad Request", 'data' => []], 400);
+        $businessProcessFees = BusinessProcessFee::where('business_sub_process_id', '=', \request('business_sub_process_id'))
+            ->where('business_process_id', '=', \request('business_process_id'))
+            ->get();
+        return response()->json(['message' => '', 'data' => $businessProcessFees], 200);
+    }
+
     public function store(Request $request){
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',

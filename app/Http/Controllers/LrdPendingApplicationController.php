@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BusinessProcess;
+use App\BusinessProcessFee;
 use App\BusinessSubProcess;
 use App\LrdPendingApplication;
 use App\PaymentBill;
@@ -42,7 +43,9 @@ class LrdPendingApplicationController extends Controller
                     $bill->created_by = "David Marfo";
                     $bill->created_by_id = 1; //fixme: change to authenticated user id
                     $bill->bill_date = Carbon::today()->toDateString();
-                    $bill->bill_amount = \request('amount');
+                    $bill->bill_amount = BusinessProcessFee::where('business_process_id', '=', \request('businessProcessId'))
+                                            ->where('business_sub_process_id', '=', \request('businessSubProcessId'))->value('amount');
+                    Log::info($bill->bill_amount);
                     $bill->save();
                     $bill->job_number =  'LVDGAST'.sprintf("%05d", $bill->id).Carbon::today()->format('Y');
                     $bill->save();

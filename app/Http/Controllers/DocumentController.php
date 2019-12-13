@@ -53,7 +53,7 @@ class DocumentController extends Controller
                     $document_history->department_from = "Upload";
                     $document_history->department_to = "Upload"; //fixme: current authenticated user's department
                     $document_history->department_from_id = 0;
-                    $document_history->department_to = 1; //fixme: current authenticated user's department
+                    $document_history->department_to_id = 1; //fixme: current authenticated user's department
                     $document_history->save();
 
                    return $document;
@@ -71,8 +71,8 @@ class DocumentController extends Controller
     public function transfer(Request $request, $id){ // move a file from one location to another
         $validator = Validator::make($request->all(), [
             'remarks' => 'required|string',
-            'department_to' => 'required|exists:departments,id',
-            'recipient' => 'required|exists:users,id',//fixme: improve on validation
+            'department_to' => 'required',//|exists:departments,id
+            'recipient' => 'required',//fixme: improve on validation |exists:users,id
         ]);
         if($validator->fails()){
             return response()->json(['message' => "Invalid data", 'data' => $validator->errors()->all()], 400);
@@ -80,22 +80,24 @@ class DocumentController extends Controller
             try {
                 $document = DB::transaction(function () use($id) {
                     $document = Document::findOrFail($id);
-                    $document->department = Department::find(\request('department_to'))->name;
-                    $document->save();
                     $document_history = new DocumentTransaction();
                     $document_history->file_id = $document->id;
                     $document_history->from_id = 1; //fixme: current authenticated user
                     $document_history->from_name = "David Marfo"; //fixme: current authenticated user
-                    $document_history->to_id = \request('recipient'); //fixme: current authenticated user
-                    $user = User::find(\request('recipient'));
-                    $document_history->to_name = $user->first_name . " " . $user->last_name;
+                    $document_history->to_id = 2; //fixme: current authenticated user
+                    // $user = User::find(\request('recipient'));
+                    $document_history->to_name = \request('recipient');
                     $document_history->from_remarks = \request('remarks'); //
-                    $document_history->to_remarks = "Upload of files received from " . $user->first_name . " " . $user->last_name;
-                    $document_history->department_from = "Upload";
-                    $document_history->department_to = "Upload"; //fixme: current authenticated user's department
+                    $document_history->to_remarks = "Upload of files received from David Marfo";
+//                    $document_history->to_remarks = "Upload of files received from " . $user->first_name . " " . $user->last_name;
+                    $document_history->department_from = $document->department;
+                    $document_history->department_to = \request('department_to'); //fixme: current authenticated user's department
                     $document_history->department_from_id = 0;
-                    $document_history->department_to = 1; //fixme: current authenticated user's department
+                    $document_history->department_to_id = 1; //fixme: current authenticated user's department
                     $document_history->save();
+                    $document->department = Department::find(\request('department_to'))->name;
+                    $document->save();
+
                     return $document;
                 });
                 return response()->json(['message' => "File transfer successful", 'data' => $document], 200);

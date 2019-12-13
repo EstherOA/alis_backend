@@ -112,6 +112,7 @@ Route::post('/business-processes-fees', 'BusinessProcessFeeController@store');
 Route::get('/business-processes-fees/{id}', 'BusinessProcessFeeController@show')->where('id', '[0-9]+');
 Route::put('/business-processes-fees/{id}', 'BusinessProcessFeeController@update')->where('id', '[0-9]+');
 Route::delete('/business-processes-fees/{id}', 'BusinessProcessFeeController@destroy')->where('id', '[0-9]+');
+Route::get('/business-processes-fees/filter', 'BusinessProcessFeeController@getByProcess');
 
 Route::get('/business-processes-checklists', 'BusinessProcessChecklistController@index');
 Route::post('/business-processes-checklists', 'BusinessProcessChecklistController@store');
@@ -122,7 +123,13 @@ Route::delete('/business-processes-checklists/{id}', 'BusinessProcessChecklistCo
 Route::get('/pending-applications', 'LrdPendingApplicationController@index');
 Route::post('/pending-applications', 'LrdPendingApplicationController@store');
 
+Route::get('/cases', 'LrdMainApplicationController@index');
+Route::get('/cases/{case_number}', 'LrdMainApplicationController@show');
+Route::get('/cases/{case_number}/documents', 'LrdMainApplicationController@documents');
+
+Route::get('/applications/{id}', 'LrdApplicationController@index');
 Route::post('/applications', 'LrdApplicationController@store');
+
 
 Route::get('/bills','PaymentBillController@index');
 Route::post('/bills', 'PaymentBillController@store');

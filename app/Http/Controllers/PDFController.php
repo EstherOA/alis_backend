@@ -35,6 +35,10 @@ class PDFController extends Controller
             } catch (\Exception $e){
                 abort(404);
             }
+        } elseif($type === "land-certificate"){
+            return view('pdf.land_certificate');
+        } elseif($type === "land-register"){
+            return view('pdf.land_register');
         }
 
     }

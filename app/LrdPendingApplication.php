@@ -14,6 +14,7 @@ class LrdPendingApplication extends Model
                 'lrd_pending_applications.business_process_sub_name', 'lrd_pending_applications.business_process_id',
                 'lrd_pending_applications.business_process_sub_id', 'payment_bills.bill_amount', 'payment_bills.customer_name',
                'lrd_pending_applications.id' )
+           ->where('lrd_pending_applications.status', '=', 'pending')
             ->get();
 }
 }

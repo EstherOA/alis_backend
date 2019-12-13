@@ -22,7 +22,7 @@ class CreateLrdApplicationsTable extends Migration
             $table->integer('business_process_id')->nullable();
             $table->string('business_process_name',255)->nullable();
             $table->text('job_purpose')->nullable();
-            $table->text('job_status')->nullable();
+            $table->enum('job_status', ['pending', 'completed'])->default('pending');
             $table->timestamp('job_datesend')->nullable();
             $table->text('job_received_by')->nullable();
             $table->text('job_forwarded_by')->nullable();
