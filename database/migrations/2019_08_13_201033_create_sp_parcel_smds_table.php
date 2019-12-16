@@ -38,6 +38,7 @@ class CreateSpParcelSmdsTable extends Migration
             $table->string('checked_by', 254)->nullable();
             $table->string('date_plott', 254)->nullable();
             $table->string('plan_no', 254)->nullable();
+            $table->integer('case_id')->nullable();
             $table->multipolygon('geom', 'GEOMETRY', 3857)->nullable();
             $table->string('source', 100)->nullable();
             $table->timestamps();

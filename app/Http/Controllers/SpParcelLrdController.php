@@ -375,4 +375,26 @@ class SpParcelLrdController extends Controller
             return true;
         else return false;
     }
+
+    public function findByCase($case_id) {
+
+        $SpParcelLrds = SpParcelLrd::selectRaw('id, cc_numb, ref_no, reg_no, cert_no, a_name, grantor,
+            locality, job_number, type_instr, date_ins, considerat, purpose, date_com, term, mul_claim,
+            remarks, t_code, label_code, plotted_by, checked_by, plott_date, area, ST_AsText(geom), source,
+            created_at, updated_at')->where('case_id', '=', $case_id);
+
+        if($SpParcelLrds->count()) {
+
+            return response()->json([
+                'message' => 'SpParcelLrd found',
+                'body' => $SpParcelLrds->first()
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'SpParcelLrd not found',
+            'body' => []
+        ], 400);
+
+    }
 }
