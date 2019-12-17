@@ -93,13 +93,15 @@ class SpParcelPvlmdController extends Controller
 
     public function index() {
 
-        $spParcelPvlmds = SpParcelPvlmd::all();
+        $spParcelPvlmds = SpParcelPvlmd::selectRaw('id, remarks, src_date, pvlmdid, map_numb,
+                        src_info, la_tenure, ST_AsText(geom), source, created_at, updated_at');
 
         if($spParcelPvlmds->count()) {
 
+
             return response()->json([
                 'message' => 'Sp_ParcelPvlmd found',
-                'body' => $spParcelPvlmds
+                'body' => $spParcelPvlmds->get()
             ], 200);
 
         }
@@ -330,6 +332,28 @@ class SpParcelPvlmdController extends Controller
         if($foundParcel->count())
             return true;
         else return false;
+    }
+
+    public function findByCase($case_id) {
+
+        $spParcelPvlmds = SpParcelPvlmd::selectRaw('id, remarks, src_date, pvlmdid, map_numb,
+                        src_info, la_tenure, ST_AsText(geom), source, created_at, updated_at')
+        ->where('case_id', '=', $case_id);
+
+        if($spParcelPvlmds->count()) {
+
+            return response()->json([
+                'message' => 'SpParcelPvlmd found',
+                'body' => $spParcelPvlmds->first()
+            ], 200);
+
+        }
+
+        return response()->json([
+            'message' => 'SpParcelPvlmd not found',
+            'body' => []
+        ], 400);
+
     }
 
 }

@@ -73,6 +73,7 @@ Route::post('sp-parcel-lrd/{id}', 'SpParcelLrdController@update'); //Fixme add a
 Route::delete('sp-parcel-lrd/{id}', 'SpParcelLrdController@destroy'); //Fixme add auth middleware
 Route::post('search-lrd', 'SpParcelLrdController@findParcelByCoordinates'); //Fixme add auth middleware
 Route::post('search-lrd/wkt', 'SpParcelLrdController@wktSearch'); //Fixme add auth middleware
+Route::post('lrd-case/{case_id}', 'SpParcelLrdController@findByCase'); //Fixme add auth middleware
 
 Route::post('sp-parcel-pvlmd', 'SpParcelPvlmdController@store'); //Fixme add auth middleware
 Route::get('sp-parcel-pvlmd', 'SpParcelPvlmdController@index'); //Fixme add auth middleware
@@ -81,6 +82,7 @@ Route::post('sp-parcel-pvlmd/{id}', 'SpParcelPvlmdController@update'); //Fixme a
 Route::delete('sp-parcel-pvlmd/{id}', 'SpParcelPvlmdController@destroy'); //Fixme add auth middleware
 Route::post('search-pvlmd', 'SpParcelPvlmdController@findParcelByCoordinates'); //Fixme add auth middleware
 Route::post('search-pvlmd/wkt', 'SpParcelPvlmdController@wktSearch'); //Fixme add auth middleware
+Route::post('pvlmd-case/{case_id}', 'SpParcelPvlmdController@findByCase'); //Fixme add auth middleware
 
 Route::post('sp-parcel-smd', 'SpParcelSmdController@store'); //Fixme add auth middleware
 Route::get('sp-parcel-smd', 'SpParcelSmdController@index'); //Fixme add auth middleware
@@ -89,6 +91,7 @@ Route::post('sp-parcel-smd/{id}', 'SpParcelSmdController@update'); //Fixme add a
 Route::delete('sp-parcel-smd/{id}', 'SpParcelSmdController@destroy'); //Fixme add auth middleware
 Route::post('search-smd', 'SpParcelSmdController@findParcelByCoordinates'); //Fixme add auth middleware
 Route::post('search-smd/wkt', 'SpParcelSmdController@wktSearch'); //Fixme add auth middleware
+Route::post('smd-case/{case_id}', 'SpParcelSmdController@findByCase'); //Fixme add auth middleware
 
 Route::post('sp-regional-boundary', 'SpRegionalBoundaryController@store'); //Fixme add auth middleware
 Route::get('sp-regional-boundary', 'SpRegionalBoundaryController@index'); //Fixme add auth middleware
