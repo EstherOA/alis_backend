@@ -107,13 +107,16 @@ class SpParcelSmdController extends Controller
 
     public function index() {
 
-        $SpParcelSmds = SpParcelSmd::all();
+        $SpParcelSmds = SpParcelSmd::selectRaw('id, ccno, ref_no, reg_no, cert_no, a_name, grantor,
+        locality, job_number, type_instr, date_instr, considerat, purpose, date_com, term, mul_claim,
+        remarks, t_code, label_code, plotted_by, checked_by, date_plott, plan_no, ST_AsText(geom), source,
+        created_at, updated_at');
 
         if($SpParcelSmds->count()) {
 
             return response()->json([
                 'message' => 'Sp_ParcelSmd found',
-                'body' => $SpParcelSmds
+                'body' => $SpParcelSmds->get()
             ], 200);
 
         }
@@ -359,6 +362,29 @@ class SpParcelSmdController extends Controller
         if($foundParcel->count())
             return true;
         else return false;
+    }
+
+    public function findByCase($case_id) {
+
+        $SpParcelSmds = SpParcelSmd::selectRaw('id, ccno, ref_no, reg_no, cert_no, a_name, grantor,
+        locality, job_number, type_instr, date_instr, considerat, purpose, date_com, term, mul_claim,
+        remarks, t_code, label_code, plotted_by, checked_by, date_plott, plan_no, ST_AsText(geom), source,
+        created_at, updated_at')->where('case_id', '=', $case_id);
+
+        if($SpParcelSmds->count()) {
+
+            return response()->json([
+                'message' => 'SpParcelSmd found',
+                'body' => $SpParcelSmds->first()
+            ], 200);
+
+        }
+
+        return response()->json([
+            'message' => 'SpParcelSmd not found',
+            'body' => []
+        ], 400);
+
     }
 
 }

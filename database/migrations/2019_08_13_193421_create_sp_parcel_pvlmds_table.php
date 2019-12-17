@@ -24,6 +24,7 @@ class CreateSpParcelPvlmdsTable extends Migration
             $table->string('source', 100)->nullable();
             $table->integer('src_info')->nullable();
             $table->integer('la_tenure')->nullable();
+            $table->integer('case_id')->nullable();
             $table->multipolygon('geom', 'GEOMETRY', 3857)->nullable();
             $table->timestamps();
             $table->softDeletes();

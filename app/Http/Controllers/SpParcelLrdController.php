@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\SpParcelLrd;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Phaza\LaravelPostgis\Geometries\LineString;
@@ -298,10 +297,11 @@ class SpParcelLrdController extends Controller
             $foundParcel = SpParcelLrd::selectRaw('id, cc_numb, ref_no, reg_no, cert_no, a_name, grantor,
             locality, job_number, type_instr, date_ins, considerat, purpose, date_com, term, mul_claim,
             remarks, t_code, label_code, plotted_by, checked_by, plott_date, area, ST_AsText(geom), source,
-            created_at, updated_at')->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
+            created_at, updated_at')
+                ->whereRaw('ST_Contains(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
                 ->orWhereRaw('ST_Overlaps(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()])
                 ->orWhereRaw('ST_Intersects(geom, ST_GeomFromText(?, 3857))', [$coords->toWKT()]);
-
+//
             if($foundParcel->count()) {
                 return response()->json([
                     'message' => 'Lrd Parcels found',
@@ -374,5 +374,27 @@ class SpParcelLrdController extends Controller
         if($foundParcel->count())
             return true;
         else return false;
+    }
+
+    public function findByCase($case_id) {
+
+        $SpParcelLrds = SpParcelLrd::selectRaw('id, cc_numb, ref_no, reg_no, cert_no, a_name, grantor,
+            locality, job_number, type_instr, date_ins, considerat, purpose, date_com, term, mul_claim,
+            remarks, t_code, label_code, plotted_by, checked_by, plott_date, area, ST_AsText(geom), source,
+            created_at, updated_at')->where('case_id', '=', $case_id);
+
+        if($SpParcelLrds->count()) {
+
+            return response()->json([
+                'message' => 'SpParcelLrd found',
+                'body' => $SpParcelLrds->first()
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'SpParcelLrd not found',
+            'body' => []
+        ], 400);
+
     }
 }
