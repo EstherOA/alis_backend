@@ -20,7 +20,9 @@ class PDFController extends Controller
             try{
                 $pendingApplication = LrdPendingApplication::findOrFail($id);
                 $bill = PaymentBill::findOrFail($pendingApplication->bill_number);
-                $process_fees = BusinessProcessFee::where('business_sub_process_id', '=', $pendingApplication->business_process_sub_id)->get();
+                $process_fees = BusinessProcessFee::where('business_sub_process_id', '=', $pendingApplication->business_process_sub_id)
+                    ->where('business_process_id', '=', $pendingApplication->business_process_id)
+                    ->get();
                 return view('pdf.service_bill', compact('bill', 'pendingApplication', 'process_fees'));
             } catch (\Exception $e){
                 abort(404);

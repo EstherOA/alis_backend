@@ -27,7 +27,7 @@ class BusinessProcessFeeController extends Controller
         $businessProcessFees = BusinessProcessFee::where('business_sub_process_id', '=', \request('business_sub_process_id'))
             ->where('business_process_id', '=', \request('business_process_id'))
             ->get();
-        return response()->json(['message' => '', 'data' => $businessProcessFees], 200);
+        return response()->json(['message' => 'OK', 'data' => $businessProcessFees], 200);
     }
 
     public function store(Request $request){
